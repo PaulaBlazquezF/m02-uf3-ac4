@@ -16,7 +16,7 @@ def connectBD():
     db = mysql.connector.connect(
         host = "localhost",
         user = "root",
-        passwd = "claumestra",
+        passwd = "Paulita2",
         database = "users"
     )
     return db
@@ -56,10 +56,11 @@ def checkUser(user,password):
     bd=connectBD()
     cursor=bd.cursor()
 
-    query=f"SELECT user,name,surname1,surname2,age,genre FROM users WHERE user='{user}'\
-            AND password='{password}'"
+    query="SELECT user,name,surname1,surname2,age,genre FROM users WHERE user=%s \
+            AND password=%s"
     print(query)
-    cursor.execute(query)
+    values = ("user01","admin")
+    cursor.execute(query, values)
     userData = cursor.fetchall()
     bd.close()
     
@@ -69,8 +70,13 @@ def checkUser(user,password):
         return userData[0]
 
 # cresteUser: crea un nuevo usuario en la BD
-def createUser(user,password,name,surname1,surname2,age,genre):
-    
+def createUser(user,password,name,surname1,surname2,age,gender):
+    bd=connectBD()
+    cursor=bd.cursor()
+    query= "INSERT INTO user (user,password,name,surname1,surname2,age,genre) \
+    VALUES (user=%s,password=%s,name=%s,surname1=%s,surname2=%s,age=%s,gender=%s)"
+    cursor.execute(query)
+    bd.cursor()
     return
 
 # Secuencia principal: configuración de la aplicación web ##########################################
@@ -89,7 +95,8 @@ def login():
 
 @app.route("/signin")
 def signin():
-    return "SIGN IN PAGE"
+    initBD()
+    return render_template("signin.html")
 
 @app.route("/results",methods=('GET', 'POST'))
 def results():
@@ -103,7 +110,22 @@ def results():
             return render_template("results.html",login=False)
         else:
             return render_template("results.html",login=True,userData=userData)
+
+@app.route ("/newUser", methods = ('GET','POST'))
+def newUser():
+    if request.method == ("POST"):
+        DataUser = request.form
+        user=DataUser['user']
+        password=DataUser['contraseña']
+        name=DataUser ['nombre']
+        surname1=DataUser ['apellido1']
+        surname2=DataUser ['apellido2']
+        age=DataUser ['edad']
+        gender=DataUser ['genero']
+        signin= createUser (user,password,name,surname1,surname2,age,gender)
         
+    
+
 # Configuración y arranque de la aplicación web
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.run(host='localhost', port=5000, debug=True)
