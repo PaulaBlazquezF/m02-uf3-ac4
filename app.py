@@ -59,7 +59,7 @@ def checkUser(user,password):
     query="SELECT user,name,surname1,surname2,age,genre FROM users WHERE user=%s \
             AND password=%s"
     print(query)
-    values = ("user01","admin")
+    values = (user,password)
     cursor.execute(query, values)
     userData = cursor.fetchall()
     bd.close()
@@ -75,7 +75,8 @@ def createUser(user,password,name,surname1,surname2,age,gender):
     cursor=bd.cursor()
     query= "INSERT INTO user (user,password,name,surname1,surname2,age,genre) \
     VALUES (user=%s,password=%s,name=%s,surname1=%s,surname2=%s,age=%s,gender=%s)"
-    cursor.execute(query)
+    values= (user,password,name,surname1,surname2,age,gender)
+    cursor.execute(query,values)
     bd.cursor()
     return
 
@@ -115,14 +116,14 @@ def results():
 def newUser():
     if request.method == ("POST"):
         DataUser = request.form
-        user=DataUser['user']
+        user=DataUser['usuario']
         password=DataUser['contraseña']
         name=DataUser ['nombre']
         surname1=DataUser ['apellido1']
         surname2=DataUser ['apellido2']
         age=DataUser ['edad']
         gender=DataUser ['genero']
-        signin= createUser (user,password,name,surname1,surname2,age,gender)
+        DataUser= createUser (user,password,name,surname1,surname2,age,gender)
         
     
 
