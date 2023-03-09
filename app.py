@@ -73,12 +73,13 @@ def checkUser(user,password):
 def createUser(user,password,name,surname1,surname2,age,gender):
     bd=connectBD()
     cursor=bd.cursor()
-    query= "INSERT INTO user (user,password,name,surname1,surname2,age,genre) \
-    VALUES (user=%s,password=%s,name=%s,surname1=%s,surname2=%s,age=%s,gender=%s)"
+    query= "INSERT INTO users (user,password,name,surname1,surname2,age,genre) \
+    VALUES (%s,%s,%s,%s,%s,%s,%s);"
     values= (user,password,name,surname1,surname2,age,gender)
     cursor.execute(query,values)
-    bd.cursor()
-    return
+    bd.commit()
+    bd.close()
+    return True
 
 # Secuencia principal: configuración de la aplicación web ##########################################
 # Instanciación de la aplicación web Flask
@@ -124,6 +125,12 @@ def newUser():
         age=DataUser ['edad']
         gender=DataUser ['genero']
         DataUser= createUser (user,password,name,surname1,surname2,age,gender)
+        
+        if DataUser == True:
+            return render_template("newUser.html", signin=True)
+        else:
+            return render_template("newUser.html", signin=False)
+            
         
     
 
